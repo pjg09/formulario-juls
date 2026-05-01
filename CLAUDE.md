@@ -17,7 +17,8 @@ No encouragement or positivity needed. Critical thinking and direct corrections 
 - Static HTML project — single `index.html` at root, no framework, no build step
 - Images: `public/images/1.jpeg`, `2.jpeg`, `3.jpeg` (relative to root)
 - Email delivery: EmailJS CDN; credentials (`EJS_PUB`, `EJS_SVC`, `EJS_TPL`) at top of inline `<script>` in `index.html`
-- Recipient email: `julianamarilest809@gmail.com` — set inside the EmailJS template, not in code
+- Recipient email: `pedrogomezl1805@gmail.com` — set inside the EmailJS template, not in code
+- `EJS_SVC` is already set to `service_ww087nd`; only `EJS_PUB` and `EJS_TPL` are TODOs
 
 ## Design system
 
@@ -44,3 +45,17 @@ Form answers accumulate in the `fd` object at the top of the `<script>` block.
 
 - Replace the 3 `TODO` constants (`EJS_PUB`, `EJS_SVC`, `EJS_TPL`) in `index.html` or email sending will silently fail
 - `public/` contains only the 3 images — nothing else should go there
+
+## Deployment
+
+- Vercel: set Output Directory to `.` (root) — no build step
+- No env vars needed in Vercel; EmailJS credentials are hardcoded in `index.html`
+
+## Gotchas
+
+- `autoResize(ta)` must be called both on `input` event AND when a step becomes visible (`onStepActive`); calling only on `input` leaves the textarea collapsed on first render
+- Navigation: `go(n)` moves forward; `go(n, true)` moves backward (reverse animation); `back()` is a wrapper around `go(n, true)`
+
+## Known browser quirks
+
+- iOS WebKit (Safari, Chrome, Firefox on iOS — all use WebKit): `minmax(0, 1fr)` grid rows expand to image intrinsic height despite explicit constraints. Fix: `overflow: hidden` on the grid container + `min-height: 0` on `<img>` children. Already applied to `.hero-grid` / `.hero-img`.

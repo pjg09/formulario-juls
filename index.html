@@ -1013,6 +1013,7 @@
                 <div class="q-main">
                     <p class="q-text">¿Qué es lo que más te incomoda de la ropa que usas hoy?</p>
                     <textarea class="ans-area" id="a4" placeholder="Escribe libremente..."></textarea>
+                    <span class="err" id="et4">Escribe tu respuesta para continuar</span>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
@@ -1034,6 +1035,7 @@
                 <div class="q-main">
                     <p class="q-text">¿Qué te hace dejar de usar una prenda?</p>
                     <textarea class="ans-area" id="a5" placeholder="Escribe libremente..."></textarea>
+                    <span class="err" id="et5">Escribe tu respuesta para continuar</span>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
@@ -1055,6 +1057,7 @@
                 <div class="q-main">
                     <p class="q-text">¿Qué sientes que le falta a las marcas actuales?</p>
                     <textarea class="ans-area" id="a6" placeholder="Escribe libremente..."></textarea>
+                    <span class="err" id="et6">Escribe tu respuesta para continuar</span>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
@@ -1076,6 +1079,7 @@
                 <div class="q-main">
                     <p class="q-text">¿Qué te gusta resaltar de tu cuerpo al vestirte?</p>
                     <textarea class="ans-area" id="a7" placeholder="Escribe libremente..."></textarea>
+                    <span class="err" id="et7">Escribe tu respuesta para continuar</span>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
@@ -1097,6 +1101,7 @@
                 <div class="q-main">
                     <p class="q-text">¿Cómo cambia tu forma de vestir según cómo te sientes ese día?</p>
                     <textarea class="ans-area" id="a8" placeholder="Escribe libremente..."></textarea>
+                    <span class="err" id="et8">Escribe tu respuesta para continuar</span>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
@@ -1277,7 +1282,13 @@
            =========================================================== */
         function saveTxt(qNum, next) {
             const el = document.getElementById('a' + qNum);
-            if (el) fd['q' + qNum] = el.value.trim();
+            const val = el ? el.value.trim() : '';
+            if (!val) {
+                const e = document.getElementById('et' + qNum);
+                if (e) { e.classList.add('show'); setTimeout(() => e.classList.remove('show'), 3000); }
+                return;
+            }
+            fd['q' + qNum] = val;
             go(next);
         }
 

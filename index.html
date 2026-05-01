@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>POLARYZ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:ital,wght@0,400;1,400&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        /* ==========================================
+           RESET & VARIABLES
+        ========================================== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --g900: #0d0d0d;
+            --g800: #1a1a1a;
+            --g700: #2a2a2a;
+            --g600: #3d3d3d;
+            --g500: #555555;
+            --g400: #888888;
+            --g300: #aaaaaa;
+            --g200: #cccccc;
+            --g100: #e5e5e5;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Space Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================
+           GRAIN OVERLAY
+        ========================================== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            background-size: 250px 250px;
+            opacity: 0.028;
+            pointer-events: none;
+            z-index: 8000;
+        }
+
+        /* ==========================================
+           CUSTOM CURSOR (desktop only)
+        ========================================== */
+        @media (hover: hover) {
+            body {
+                cursor: none;
+            }
+
+            .cursor {
+                position: fixed;
+                width: 7px;
+                height: 7px;
+                background: var(--white);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
+                mix-blend-mode: difference;
+                will-change: transform;
+            }
+
+            .cursor.big {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        @media (hover: none) {
+            .cursor {
+                display: none;
+            }
+        }
+
+        /* ==========================================
+           PROGRESS BAR
+        ========================================== */
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 1px;
+            background: var(--white);
+            z-index: 500;
+            transition: width 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+            width: 0%;
+        }
+
+        /* ==========================================
+           STEP SYSTEM
+        ========================================== */
+        #wrap {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .step {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 52px 24px 72px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(40px);
+            transition: opacity 0.38s ease, transform 0.42s cubic-bezier(0.25, 0.1, 0.25, 1);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--g700) transparent;
+        }
+
+        .step::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        .step::-webkit-scrollbar-thumb {
+            background: var(--g700);
+        }
+
+        .step.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0);
+        }
+
+        .step.exit {
+            opacity: 0;
+            transform: translateX(-24px);
+            pointer-events: none;
+        }
+
+        .step.exit-back {
+            opacity: 0;
+            transform: translateX(24px);
+            pointer-events: none;
+        }
+
+        /* ==========================================
+           STEP INDICATOR
+        ========================================== */
+        .indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            letter-spacing: 0.18em;
+            color: var(--g200);
+            text-transform: uppercase;
+            margin-bottom: 48px;
+            position: sticky;
+            top: -52px;
+            padding-top: 52px;
+            background: linear-gradient(to bottom, var(--black) 75%, transparent);
+            z-index: 5;
+            flex-shrink: 0;
+        }
+
+        /* ==========================================
+           GHOST NUMBER WATERMARK
+        ========================================== */
+        .ghost-num {
+            position: absolute;
+            right: -4px;
+            top: 32px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(110px, 32vw, 220px);
+            line-height: 1;
+            color: var(--white);
+            opacity: 0.038;
+            pointer-events: none;
+            user-select: none;
+            letter-spacing: -0.02em;
+        }
+
+        /* ==========================================
+           QUESTION LAYOUT
+        ========================================== */
+        .q-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .q-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(24px, 6vw, 40px);
+            line-height: 1.25;
+            color: var(--white);
+            margin-bottom: 36px;
+            letter-spacing: 0.01em;
+        }
+
+        /* ==========================================
+           OPTION TAGS (multiple choice)
+        ========================================== */
+        .opts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            padding: 11px 20px;
+            border: 1px solid var(--g600);
+            font-family: 'Space Mono', monospace;
+            font-size: 15px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--g100);
+            background: transparent;
+            cursor: none;
+            transition: border-color 0.18s, color 0.18s, background 0.18s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        @media (hover: none) {
+            .tag {
+                cursor: pointer;
+            }
+        }
+
+        .tag:hover {
+            border-color: var(--g500);
+            color: var(--g200);
+        }
+
+        .tag.on {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        /* Other input */
+        .other-wrap {
+            width: 100%;
+            margin-top: 4px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+        .other-wrap.open {
+            max-height: 120px;
+        }
+
+        .other-inp {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--g500);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(18px, 4.5vw, 24px);
+            letter-spacing: 0.02em;
+            padding: 12px 0;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .other-inp::placeholder {
+            color: var(--g500);
+            font-style: italic;
+        }
+
+        .other-inp:focus {
+            border-color: var(--white);
+        }
+
+        /* ==========================================
+           TEXTAREA (open answers)
+        ========================================== */
+        .ans-area {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--g700);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: clamp(18px, 4.5vw, 26px);
+            line-height: 1.55;
+            padding: 14px 0 4px;
+            resize: none;
+            outline: none;
+            overflow: hidden;
+            min-height: 0;
+            transition: border-color 0.25s;
+            flex-shrink: 0;
+        }
+
+        .ans-area::placeholder {
+            color: var(--g600);
+            font-style: italic;
+        }
+
+        .ans-area:focus {
+            border-color: var(--g400);
+        }
+
+        /* ==========================================
+           NAVIGATION
+        ========================================== */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 32px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .btn-back {
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--g400);
+            background: none;
+            border: none;
+            cursor: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            padding: 8px 0;
+            transition: color 0.2s;
+        }
+        .btn-back:hover { color: var(--g400); }
+
+        .btn-skip {
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--g300);
+            background: none;
+            border: none;
+            cursor: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            padding: 8px 0;
+        }
+
+        @media (hover: none) {
+
+            .btn-back,
+            .btn-skip,
+            .btn-next,
+            .btn-start,
+            .btn-send {
+                cursor: pointer;
+            }
+        }
+
+        .btn-next {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--white);
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--white);
+            padding: 8px 0;
+            cursor: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s;
+        }
+
+        .btn-next:hover {
+            opacity: 0.6;
+        }
+
+        .err {
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            color: #cc4444;
+            margin-top: 10px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .err.show {
+            display: block;
+        }
+
+        /* ==========================================
+           HERO STEP
+        ========================================== */
+        #s0 {
+            padding: 0;
+            overflow: hidden;
+            justify-content: flex-end;
+        }
+
+        #s0.active {
+            transform: none;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-rows: repeat(3, minmax(0, 1fr));
+            grid-template-columns: 1fr;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.05) brightness(0.85);
+            opacity: 0;
+            transition: opacity 1.1s ease;
+        }
+
+        .hero-img.loaded {
+            opacity: 1;
+        }
+
+        .hero-img:nth-child(1) {
+            transition-delay: 0.05s;
+        }
+
+        .hero-img:nth-child(2) {
+            transition-delay: 0.25s;
+        }
+
+        .hero-img:nth-child(3) {
+            transition-delay: 0.45s;
+        }
+
+        /* Anclar todas las imágenes del hero en mobile */
+        .hero-img { object-position: center 30%; }
+
+        /* Dividers between images — horizontal on mobile, vertical on desktop */
+        .hero-grid::before,
+        .hero-grid::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .hero-grid::before { top: 33.333%; }
+        .hero-grid::after  { top: 66.666%; }
+
+        @media (min-width: 768px) {
+            .hero-grid {
+                grid-template-rows: none;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .hero-img { object-position: center center; }
+
+
+            .hero-grid::before,
+            .hero-grid::after {
+                top: 0;
+                bottom: 0;
+                left: auto;
+                right: auto;
+                width: 1px;
+                height: auto;
+            }
+
+            .hero-grid::before { left: 33.333%; }
+            .hero-grid::after  { left: 66.666%; }
+        }
+
+        .hero-veil {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                    rgba(0, 0, 0, 0.97) 0%,
+                    rgba(0, 0, 0, 0.55) 45%,
+                    rgba(0, 0, 0, 0.25) 100%);
+            z-index: 3;
+        }
+
+        .hero-body {
+            position: relative;
+            z-index: 10;
+            padding: 36px 24px 52px;
+        }
+
+        .brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(88px, 26vw, 200px);
+            line-height: 0.88;
+            letter-spacing: -0.01em;
+            color: var(--white);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .hero-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(20px, 5vw, 26px);
+            color: var(--g100);
+            margin-bottom: 40px;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-start {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--black);
+            background: var(--white);
+            border: none;
+            padding: 16px 28px;
+            cursor: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-start:hover {
+            background: var(--g100);
+        }
+
+        .btn-start svg {
+            flex-shrink: 0;
+        }
+
+        /* ==========================================
+           CONTACT STEP
+        ========================================== */
+        #s9 {
+            justify-content: flex-start;
+        }
+
+        .contact-eyebrow {
+            font-size: 14px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--g200);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .contact-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            font-size: clamp(26px, 7vw, 46px);
+            line-height: 1.1;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .contact-note {
+            font-size: 15px;
+            letter-spacing: 0.04em;
+            color: var(--g200);
+            line-height: 1.9;
+            margin-bottom: 40px;
+        }
+
+        .field-label {
+            font-size: 14px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--g200);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .field-inp {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--g700);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(18px, 5vw, 26px);
+            font-weight: 300;
+            padding: 10px 0;
+            outline: none;
+            margin-bottom: 30px;
+            transition: border-color 0.25s;
+        }
+
+        .field-inp:focus {
+            border-color: var(--g400);
+        }
+
+        .field-inp::placeholder {
+            color: var(--g700);
+        }
+
+        .btn-send {
+            width: 100%;
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 15px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 20px;
+            cursor: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.2s;
+            margin-top: 4px;
+        }
+
+        .btn-send:hover {
+            background: var(--g100);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        /* ==========================================
+           SUCCESS STEP
+        ========================================== */
+        #s10 {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 0;
+            padding: 40px 32px;
+        }
+
+        .done-mark {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(64px, 22vw, 130px);
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 4px;
+            letter-spacing: -0.02em;
+        }
+
+        .done-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(20px, 5vw, 32px);
+            color: var(--g100);
+            margin-bottom: 28px;
+        }
+
+        .done-copy {
+            font-size: 15px;
+            letter-spacing: 0.07em;
+            color: var(--g200);
+            line-height: 2;
+            max-width: 260px;
+        }
+
+        .done-line {
+            width: 1px;
+            height: 60px;
+            background: var(--g700);
+            margin: 28px auto;
+        }
+
+        /* ==========================================
+           DESKTOP LAYOUT
+        ========================================== */
+        @media (min-width: 768px) {
+            .step {
+                padding: 60px 8% 80px;
+            }
+
+            .hero-body {
+                padding: 60px 8% 70px;
+            }
+
+            .brand {
+                font-size: clamp(100px, 18vw, 230px);
+            }
+        }
+
+        @media (min-width: 1100px) {
+
+            /* Two-column layout for question steps */
+            .q-layout {
+                display: grid;
+                grid-template-columns: 1fr 380px;
+                column-gap: 80px;
+                align-items: start;
+                flex: 1;
+            }
+
+            .q-main {
+                grid-column: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .q-aside {
+                grid-column: 2;
+                grid-row: 1 / 3;
+                display: block;
+            }
+
+            .q-aside img {
+                width: 100%;
+                height: 520px;
+                object-fit: cover;
+                object-position: center top;
+                filter: grayscale(100%) brightness(0.6);
+            }
+
+            #s0 .brand {
+                font-size: clamp(120px, 13vw, 240px);
+            }
+        }
+
+        @media (max-width: 1099px) {
+            .q-aside { display: none; }
+
+            .q-layout {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .q-main {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Background images applied via JS on load */
+            .step-bg {
+                background-size: cover;
+                background-position: center top;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Cursor (desktop) -->
+    <div class="cursor" id="cursor"></div>
+
+    <!-- Progress bar -->
+    <div id="progress"></div>
+
+    <!-- ============================================================
+     ALL STEPS
+============================================================ -->
+    <div id="wrap">
+
+        <!-- ── STEP 0: HERO ─────────────────────────────────── -->
+        <div class="step active" id="s0">
+            <div class="hero-grid">
+                <img class="hero-img" src="public/images/1.jpeg" alt="" loading="eager"
+                    onload="this.classList.add('loaded')">
+                <img class="hero-img" src="public/images/2.jpeg" alt="" loading="eager"
+                    onload="this.classList.add('loaded')">
+                <img class="hero-img" src="public/images/3.jpeg" alt="" loading="eager"
+                    onload="this.classList.add('loaded')">
+            </div>
+            <div class="hero-veil"></div>
+            <div class="hero-body">
+                <span class="brand">POLARYZ</span>
+                <p class="hero-sub">Cuéntanos quién eres cuando nadie te mira.</p>
+                <button class="btn-start" onclick="go(1)">
+                    Comenzar
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 7.5h11M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 1: Q1 ────────────────────────────────────── -->
+        <div class="step" id="s1">
+            <div class="indicator"><span>POLARYZ</span><span>01 / 08</span></div>
+            <div class="ghost-num">01</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿En qué momentos te importa más cómo te ves?</p>
+                    <div class="opts" id="opts1">
+                        <button class="tag" data-q="1" data-v="Día a día" onclick="pick(this)">Día a día</button>
+                        <button class="tag" data-q="1" data-v="Salidas / noche" onclick="pick(this)">Salidas /
+                            noche</button>
+                        <button class="tag" data-q="1" data-v="Eventos / festivales" onclick="pick(this)">Eventos /
+                            festivales</button>
+                        <button class="tag" data-q="1" data-v="Redes sociales" onclick="pick(this)">Redes
+                            sociales</button>
+                        <button class="tag" data-q="1" data-v="__otros__" onclick="otros(this,'oi1')">Otros</button>
+                    </div>
+                    <div class="other-wrap" id="ow1"><input class="other-inp" id="oi1" placeholder="¿Cuál?"></div>
+                    <p class="err" id="e1">Selecciona al menos una opción.</p>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="go(2)">Omitir</button>
+                            <button class="btn-next" onclick="nextCheck(1,2)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/1.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 2: Q2 ────────────────────────────────────── -->
+        <div class="step" id="s2">
+            <div class="indicator"><span>POLARYZ</span><span>02 / 08</span></div>
+            <div class="ghost-num">02</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿En qué situaciones usarías prendas de Polaryz?</p>
+                    <div class="opts" id="opts2">
+                        <button class="tag" data-q="2" data-v="Salidas nocturnas" onclick="pick(this)">Salidas
+                            nocturnas</button>
+                        <button class="tag" data-q="2" data-v="Festivales / raves" onclick="pick(this)">Festivales /
+                            raves</button>
+                        <button class="tag" data-q="2" data-v="Calle / cotidiano" onclick="pick(this)">Calle /
+                            cotidiano</button>
+                        <button class="tag" data-q="2" data-v="Espacios creativos" onclick="pick(this)">Espacios
+                            creativos</button>
+                        <button class="tag" data-q="2" data-v="__otros__" onclick="otros(this,'oi2')">Otros</button>
+                    </div>
+                    <div class="other-wrap" id="ow2"><input class="other-inp" id="oi2" placeholder="¿Cuál?"></div>
+                    <p class="err" id="e2">Selecciona al menos una opción.</p>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="go(3)">Omitir</button>
+                            <button class="btn-next" onclick="nextCheck(2,3)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/2.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 3: Q3 ────────────────────────────────────── -->
+        <div class="step" id="s3">
+            <div class="indicator"><span>POLARYZ</span><span>03 / 08</span></div>
+            <div class="ghost-num">03</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿Qué valoras más al comprar una prenda?</p>
+                    <div class="opts" id="opts3">
+                        <button class="tag" data-q="3" data-v="Diseño / estética" onclick="pick(this)">Diseño /
+                            estética</button>
+                        <button class="tag" data-q="3" data-v="Comodidad" onclick="pick(this)">Comodidad</button>
+                        <button class="tag" data-q="3" data-v="Precio" onclick="pick(this)">Precio</button>
+                        <button class="tag" data-q="3" data-v="Versatilidad" onclick="pick(this)">Versatilidad</button>
+                        <button class="tag" data-q="3" data-v="Identidad de marca" onclick="pick(this)">Identidad de
+                            marca</button>
+                    </div>
+                    <p class="err" id="e3">Selecciona al menos una opción.</p>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="go(4)">Omitir</button>
+                            <button class="btn-next" onclick="nextCheck(3,4)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/3.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 4: Q4 ────────────────────────────────────── -->
+        <div class="step" id="s4">
+            <div class="indicator"><span>POLARYZ</span><span>04 / 08</span></div>
+            <div class="ghost-num">04</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿Qué es lo que más te incomoda de la ropa que usas hoy?</p>
+                    <textarea class="ans-area" id="a4" placeholder="Escribe libremente..."></textarea>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="saveTxt(4,5)">Omitir</button>
+                            <button class="btn-next" onclick="saveTxt(4,5)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/1.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 5: Q5 ────────────────────────────────────── -->
+        <div class="step" id="s5">
+            <div class="indicator"><span>POLARYZ</span><span>05 / 08</span></div>
+            <div class="ghost-num">05</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿Qué te hace dejar de usar una prenda?</p>
+                    <textarea class="ans-area" id="a5" placeholder="Escribe libremente..."></textarea>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="saveTxt(5,6)">Omitir</button>
+                            <button class="btn-next" onclick="saveTxt(5,6)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/2.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 6: Q6 ────────────────────────────────────── -->
+        <div class="step" id="s6">
+            <div class="indicator"><span>POLARYZ</span><span>06 / 08</span></div>
+            <div class="ghost-num">06</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿Qué sientes que le falta a las marcas actuales?</p>
+                    <textarea class="ans-area" id="a6" placeholder="Escribe libremente..."></textarea>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="saveTxt(6,7)">Omitir</button>
+                            <button class="btn-next" onclick="saveTxt(6,7)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/3.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 7: Q7 ────────────────────────────────────── -->
+        <div class="step" id="s7">
+            <div class="indicator"><span>POLARYZ</span><span>07 / 08</span></div>
+            <div class="ghost-num">07</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿Qué te gusta resaltar de tu cuerpo al vestirte?</p>
+                    <textarea class="ans-area" id="a7" placeholder="Escribe libremente..."></textarea>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="saveTxt(7,8)">Omitir</button>
+                            <button class="btn-next" onclick="saveTxt(7,8)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/1.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 8: Q8 ────────────────────────────────────── -->
+        <div class="step" id="s8">
+            <div class="indicator"><span>POLARYZ</span><span>08 / 08</span></div>
+            <div class="ghost-num">08</div>
+            <div class="q-layout">
+                <div class="q-main">
+                    <p class="q-text">¿Cómo cambia tu forma de vestir según cómo te sientes ese día?</p>
+                    <textarea class="ans-area" id="a8" placeholder="Escribe libremente..."></textarea>
+                    <div class="nav">
+                        <button class="btn-back" onclick="back()">← Volver</button>
+                        <div class="nav-right">
+                            <button class="btn-skip" onclick="saveTxt(8,9)">Omitir</button>
+                            <button class="btn-next" onclick="saveTxt(8,9)">Continuar →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="q-aside"><img src="public/images/2.jpeg" alt=""></div>
+            </div>
+        </div>
+
+        <!-- ── STEP 9: CONTACT ───────────────────────────────── -->
+        <div class="step" id="s9">
+            <div class="indicator"><span>POLARYZ</span><span>DATOS</span></div>
+            <span class="contact-eyebrow">Última parte</span>
+            <h2 class="contact-title">Casi terminamos.</h2>
+            <p class="contact-note">
+                Dejá tu nombre y correo para que podamos<br>
+                compartirte novedades de Polaryz.
+            </p>
+            <label class="field-label" for="fn">Nombre</label>
+            <input class="field-inp" id="fn" type="text" placeholder="Tu nombre" autocomplete="name">
+            <label class="field-label" for="fe">Correo electrónico</label>
+            <input class="field-inp" id="fe" type="email" placeholder="tu@correo.com" autocomplete="email">
+            <p class="err" id="ec">Completá tu nombre y un correo válido.</p>
+            <button class="btn-send" id="bsend" onclick="send()">Enviar respuestas</button>
+            <button class="btn-back" style="margin-top:20px;display:block;text-align:left;" onclick="back()">← Volver</button>
+        </div>
+
+        <!-- ── STEP 10: SUCCESS ──────────────────────────────── -->
+        <div class="step" id="s10">
+            <div class="done-mark">✕</div>
+            <p class="done-title">Gracias por tu tiempo.</p>
+            <div class="done-line"></div>
+            <p class="done-copy">
+                Tus respuestas ya están con nosotros.<br>
+                Algo nuevo se está construyendo.<br><br>
+                — POLARYZ
+            </p>
+        </div>
+
+    </div><!-- /wrap -->
+
+    <script>
+        /* ===========================================================
+           EMAILJS — CONFIGURACIÓN
+           1. emailjs.com → Create Account
+           2. Email Services → Add New Service → Gmail → conectar pedrogomezl1805@gmail.com
+           3. Email Templates → Create New Template (ver estructura abajo)
+           4. Account → General → Public Key
+           =========================================================== */
+        const EJS_PUB = 'TODO_PUBLIC_KEY';    // Account → General → Public Key
+        const EJS_SVC = 'TODO_SERVICE_ID';    // Email Services → Service ID
+        const EJS_TPL = 'TODO_TEMPLATE_ID';   // Email Templates → Template ID
+
+        emailjs.init(EJS_PUB);
+
+        /* ===========================================================
+           ESTADO DEL FORMULARIO
+           =========================================================== */
+        const fd = {
+            q1: [], q1o: '',
+            q2: [], q2o: '',
+            q3: [],
+            q4: '', q5: '', q6: '', q7: '', q8: '',
+            name: '', email: ''
+        };
+
+        /* ===========================================================
+           NAVEGACIÓN
+           =========================================================== */
+        const TOTAL = 9; // pasos 1–9 con progreso
+        let cur = 0;
+
+        function go(n, rev = false) {
+            const from = document.getElementById('s' + cur);
+            const to   = document.getElementById('s' + n);
+            if (!to) return;
+
+            function onStepActive() {
+                to.scrollTop = 0;
+                to.querySelectorAll('.ans-area').forEach(autoResize);
+            }
+
+            if (rev) {
+                // Backward: incoming slides in from left, outgoing exits to right
+                to.style.transition = 'none';
+                to.style.transform  = 'translateX(-40px)';
+                to.style.opacity    = '0';
+                from.classList.add('exit-back');
+                from.classList.remove('active');
+
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    to.style.transition = '';
+                    to.style.transform  = '';
+                    to.style.opacity    = '';
+                    to.classList.add('active');
+                    onStepActive();
+                }));
+            } else {
+                from.classList.add('exit');
+                from.classList.remove('active');
+                setTimeout(() => {
+                    to.classList.add('active');
+                    onStepActive();
+                }, 360);
+            }
+
+            setTimeout(() => {
+                from.classList.remove('exit', 'exit-back');
+                cur = n;
+                updateBar();
+            }, 420);
+        }
+
+        function back() { go(cur - 1, true); }
+
+        function updateBar() {
+            const pct = cur === 0 || cur >= 10 ? (cur >= 10 ? 100 : 0) : (cur / TOTAL) * 100;
+            document.getElementById('progress').style.width = pct + '%';
+        }
+
+        /* ===========================================================
+           OPCIONES MÚLTIPLES
+           =========================================================== */
+        function pick(btn) {
+            btn.classList.toggle('on');
+        }
+
+        function otros(btn, inputId) {
+            btn.classList.toggle('on');
+            const wrap = btn.closest('.q-main').querySelector('.other-wrap');
+            const inp = document.getElementById(inputId);
+            const open = btn.classList.contains('on');
+            wrap.classList.toggle('open', open);
+            if (open) inp.focus();
+            else inp.value = '';
+        }
+
+        /* Recolectar selecciones de una pregunta con opciones */
+        function collect(qNum) {
+            const tags = document.querySelectorAll(`[data-q="${qNum}"].on`);
+            const vals = [];
+            let hasOtros = false;
+
+            tags.forEach(t => {
+                if (t.dataset.v === '__otros__') hasOtros = true;
+                else vals.push(t.dataset.v);
+            });
+
+            if (hasOtros) {
+                const inp = document.getElementById('oi' + qNum);
+                if (inp && inp.value.trim()) vals.push(inp.value.trim());
+            }
+
+            return vals;
+        }
+
+        function nextCheck(qNum, next) {
+            const vals = collect(qNum);
+            fd['q' + qNum] = vals;
+
+            if (vals.length === 0) {
+                const e = document.getElementById('e' + qNum);
+                e.classList.add('show');
+                setTimeout(() => e.classList.remove('show'), 3000);
+                return;
+            }
+
+            go(next);
+        }
+
+        /* ===========================================================
+           RESPUESTAS ABIERTAS
+           =========================================================== */
+        function saveTxt(qNum, next) {
+            const el = document.getElementById('a' + qNum);
+            if (el) fd['q' + qNum] = el.value.trim();
+            go(next);
+        }
+
+        /* ===========================================================
+           ENVÍO
+           =========================================================== */
+        async function send() {
+            const name = document.getElementById('fn').value.trim();
+            const email = document.getElementById('fe').value.trim();
+            const errEl = document.getElementById('ec');
+
+            if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errEl.classList.add('show');
+                return;
+            }
+
+            fd.name = name;
+            fd.email = email;
+            errEl.classList.remove('show');
+
+            const btn = document.getElementById('bsend');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            const fmt = arr => arr.length ? arr.join(' · ') : '—';
+
+            const params = {
+                to_email:  'pedrogomezl1805@gmail.com',
+                reply_to:  email,
+                from_name: name,
+                from_email: email,
+                q1: fmt(fd.q1),
+                q2: fmt(fd.q2),
+                q3: fmt(fd.q3),
+                q4: fd.q4 || '—',
+                q5: fd.q5 || '—',
+                q6: fd.q6 || '—',
+                q7: fd.q7 || '—',
+                q8: fd.q8 || '—',
+            };
+
+            try {
+                await emailjs.send(EJS_SVC, EJS_TPL, params);
+                go(10);
+            } catch (err) {
+                console.error(err);
+                btn.disabled = false;
+                btn.textContent = 'Error — Intentá de nuevo';
+                setTimeout(() => { btn.textContent = 'Enviar respuestas'; }, 4000);
+            }
+        }
+
+        /* ===========================================================
+           SECUENCIA DE IMÁGENES ALEATORIA EN MOBILE
+           =========================================================== */
+        (function () {
+            const imgs    = ['public/images/1.jpeg', 'public/images/2.jpeg', 'public/images/3.jpeg'];
+            const start   = Math.floor(Math.random() * 3);
+            const overlay = 'linear-gradient(rgba(0,0,0,0.88),rgba(0,0,0,0.88))';
+            const mobile  = window.innerWidth < 1100;
+
+            // Hero: reordenar las 3 imágenes según start
+            document.querySelectorAll('.hero-img').forEach((img, i) => {
+                img.src = imgs[(start + i) % 3];
+            });
+
+            // Steps: fondo mobile + imagen lateral desktop
+            for (let i = 1; i <= 9; i++) {
+                const el = document.getElementById('s' + i);
+                if (!el) continue;
+                const img = imgs[(start + i - 1) % 3];
+
+                if (mobile) {
+                    el.style.backgroundImage = `${overlay}, url('${img}')`;
+                    el.classList.add('step-bg');
+                }
+
+                const aside = el.querySelector('.q-aside img');
+                if (aside) aside.src = img;
+            }
+        })();
+
+        /* ===========================================================
+           AUTO-RESIZE TEXTAREAS
+           =========================================================== */
+        function autoResize(el) {
+            el.style.height = '0px';
+            el.style.height = el.scrollHeight + 'px';
+        }
+        document.querySelectorAll('.ans-area').forEach(ta => {
+            ta.setAttribute('rows', '1');
+            ta.addEventListener('input', () => autoResize(ta));
+        });
+
+        /* ===========================================================
+           CURSOR PERSONALIZADO
+           =========================================================== */
+        const cur$ = document.getElementById('cursor');
+        if (cur$) {
+            let mx = 0, my = 0;
+            document.addEventListener('mousemove', e => {
+                mx = e.clientX; my = e.clientY;
+                cur$.style.left = mx + 'px';
+                cur$.style.top = my + 'px';
+            });
+
+            document.querySelectorAll('button, .tag, .btn-back').forEach(el => {
+                el.addEventListener('mouseenter', () => cur$.classList.add('big'));
+                el.addEventListener('mouseleave', () => cur$.classList.remove('big'));
+            });
+        }
+
+        /* ===========================================================
+           KEYBOARD SHORTCUT
+           =========================================================== */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && cur === 0) go(1);
+        });
+    </script>
+</body>
+
+</html>

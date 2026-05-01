@@ -364,26 +364,14 @@
             padding: 8px 0;
             transition: color 0.2s;
         }
-        .btn-back:hover { color: var(--g400); }
 
-        .btn-skip {
-            font-family: 'Space Mono', monospace;
-            font-size: 13px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--g300);
-            background: none;
-            border: none;
-            cursor: none;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            padding: 8px 0;
+        .btn-back:hover {
+            color: var(--g400);
         }
 
         @media (hover: none) {
 
             .btn-back,
-            .btn-skip,
             .btn-next,
             .btn-start,
             .btn-send {
@@ -470,8 +458,6 @@
             transition-delay: 0.45s;
         }
 
-        /* Anclar todas las imágenes del hero en mobile */
-        .hero-img { object-position: center 30%; }
 
         /* Dividers between images — horizontal on mobile, vertical on desktop */
         .hero-grid::before,
@@ -486,17 +472,23 @@
             z-index: 2;
         }
 
-        .hero-grid::before { top: 33.333%; }
-        .hero-grid::after  { top: 66.666%; }
+        .hero-grid::before {
+            top: 33.333%;
+        }
 
-        @media (min-width: 768px) {
+        .hero-grid::after {
+            top: 66.666%;
+        }
+
+        @media (min-width: 1100px) {
             .hero-grid {
                 grid-template-rows: none;
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
-            .hero-img { object-position: center center; }
-
+            .hero-img {
+                object-position: center center;
+            }
 
             .hero-grid::before,
             .hero-grid::after {
@@ -508,8 +500,13 @@
                 height: auto;
             }
 
-            .hero-grid::before { left: 33.333%; }
-            .hero-grid::after  { left: 66.666%; }
+            .hero-grid::before {
+                left: 33.333%;
+            }
+
+            .hero-grid::after {
+                left: 66.666%;
+            }
         }
 
         .hero-veil {
@@ -763,7 +760,9 @@
         }
 
         @media (max-width: 1099px) {
-            .q-aside { display: none; }
+            .q-aside {
+                display: none;
+            }
 
             .q-layout {
                 flex: 1;
@@ -845,7 +844,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="go(2)">Omitir</button>
                             <button class="btn-next" onclick="nextCheck(1,2)">Continuar →</button>
                         </div>
                     </div>
@@ -877,7 +875,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="go(3)">Omitir</button>
                             <button class="btn-next" onclick="nextCheck(2,3)">Continuar →</button>
                         </div>
                     </div>
@@ -906,7 +903,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="go(4)">Omitir</button>
                             <button class="btn-next" onclick="nextCheck(3,4)">Continuar →</button>
                         </div>
                     </div>
@@ -926,7 +922,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="saveTxt(4,5)">Omitir</button>
                             <button class="btn-next" onclick="saveTxt(4,5)">Continuar →</button>
                         </div>
                     </div>
@@ -946,7 +941,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="saveTxt(5,6)">Omitir</button>
                             <button class="btn-next" onclick="saveTxt(5,6)">Continuar →</button>
                         </div>
                     </div>
@@ -966,7 +960,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="saveTxt(6,7)">Omitir</button>
                             <button class="btn-next" onclick="saveTxt(6,7)">Continuar →</button>
                         </div>
                     </div>
@@ -986,7 +979,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="saveTxt(7,8)">Omitir</button>
                             <button class="btn-next" onclick="saveTxt(7,8)">Continuar →</button>
                         </div>
                     </div>
@@ -1006,7 +998,6 @@
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
                         <div class="nav-right">
-                            <button class="btn-skip" onclick="saveTxt(8,9)">Omitir</button>
                             <button class="btn-next" onclick="saveTxt(8,9)">Continuar →</button>
                         </div>
                     </div>
@@ -1030,7 +1021,8 @@
             <input class="field-inp" id="fe" type="email" placeholder="tu@correo.com" autocomplete="email">
             <p class="err" id="ec">Completá tu nombre y un correo válido.</p>
             <button class="btn-send" id="bsend" onclick="send()">Enviar respuestas</button>
-            <button class="btn-back" style="margin-top:20px;display:block;text-align:left;" onclick="back()">← Volver</button>
+            <button class="btn-back" style="margin-top:20px;display:block;text-align:left;" onclick="back()">←
+                Volver</button>
         </div>
 
         <!-- ── STEP 10: SUCCESS ──────────────────────────────── -->
@@ -1055,9 +1047,9 @@
            3. Email Templates → Create New Template (ver estructura abajo)
            4. Account → General → Public Key
            =========================================================== */
-        const EJS_PUB = 'TODO_PUBLIC_KEY';    // Account → General → Public Key
-        const EJS_SVC = 'TODO_SERVICE_ID';    // Email Services → Service ID
-        const EJS_TPL = 'TODO_TEMPLATE_ID';   // Email Templates → Template ID
+        const EJS_PUB = '9bdRpyNet8HsDpl-A';    // Account → General → Public Key
+        const EJS_SVC = 'service_1aqpn2c';
+        const EJS_TPL = 'template_zx8d56q';   // Email Templates → Template ID
 
         emailjs.init(EJS_PUB);
 
@@ -1080,7 +1072,7 @@
 
         function go(n, rev = false) {
             const from = document.getElementById('s' + cur);
-            const to   = document.getElementById('s' + n);
+            const to = document.getElementById('s' + n);
             if (!to) return;
 
             function onStepActive() {
@@ -1091,15 +1083,15 @@
             if (rev) {
                 // Backward: incoming slides in from left, outgoing exits to right
                 to.style.transition = 'none';
-                to.style.transform  = 'translateX(-40px)';
-                to.style.opacity    = '0';
+                to.style.transform = 'translateX(-40px)';
+                to.style.opacity = '0';
                 from.classList.add('exit-back');
                 from.classList.remove('active');
 
                 requestAnimationFrame(() => requestAnimationFrame(() => {
                     to.style.transition = '';
-                    to.style.transform  = '';
-                    to.style.opacity    = '';
+                    to.style.transform = '';
+                    to.style.opacity = '';
                     to.classList.add('active');
                     onStepActive();
                 }));
@@ -1209,8 +1201,8 @@
             const fmt = arr => arr.length ? arr.join(' · ') : '—';
 
             const params = {
-                to_email:  'pedrogomezl1805@gmail.com',
-                reply_to:  email,
+                to_email: 'pedrogomezl1805@gmail.com',
+                reply_to: email,
                 from_name: name,
                 from_email: email,
                 q1: fmt(fd.q1),
@@ -1238,10 +1230,10 @@
            SECUENCIA DE IMÁGENES ALEATORIA EN MOBILE
            =========================================================== */
         (function () {
-            const imgs    = ['public/images/1.jpeg', 'public/images/2.jpeg', 'public/images/3.jpeg'];
-            const start   = Math.floor(Math.random() * 3);
+            const imgs = ['public/images/1.jpeg', 'public/images/2.jpeg', 'public/images/3.jpeg'];
+            const start = Math.floor(Math.random() * 3);
             const overlay = 'linear-gradient(rgba(0,0,0,0.88),rgba(0,0,0,0.88))';
-            const mobile  = window.innerWidth < 1100;
+            const mobile = window.innerWidth < 1100;
 
             // Hero: reordenar las 3 imágenes según start
             document.querySelectorAll('.hero-img').forEach((img, i) => {

@@ -5,13 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>POLARYZ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:ital,wght@0,400;1,400&display=swap"
-        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
+        @font-face {
+            font-family: 'Eurostile Extended';
+            src: url('public/fonts/EurostileExtendedBlack.woff2') format('woff2'),
+                 url('public/fonts/EurostileExtendedBlack.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
         /* ==========================================
            RESET & VARIABLES
         ========================================== */
@@ -44,7 +48,7 @@
             overflow: hidden;
             background: var(--black);
             color: var(--white);
-            font-family: 'Space Mono', monospace;
+            font-family: 'Eurostile Extended', sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -176,9 +180,29 @@
             position: sticky;
             top: -52px;
             padding-top: 52px;
-            background: linear-gradient(to bottom, var(--black) 75%, transparent);
             z-index: 5;
             flex-shrink: 0;
+        }
+
+        .indicator-name {
+            height: 200px;
+            width: auto;
+            filter: brightness(0) invert(0.6);
+        }
+
+        .indicator-logo-datos {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .indicator-logo-datos {
+                display: block;
+                height: 100px;
+                width: auto;
+                object-fit: contain;
+                filter: invert(1);
+                opacity: 0.6;
+            }
         }
 
         /* ==========================================
@@ -188,7 +212,7 @@
             position: absolute;
             right: -4px;
             top: 32px;
-            font-family: 'Bebas Neue', sans-serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: clamp(110px, 32vw, 220px);
             line-height: 1;
             color: var(--white);
@@ -210,7 +234,7 @@
         }
 
         .q-text {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-style: italic;
             font-weight: 400;
             font-size: clamp(24px, 6vw, 40px);
@@ -233,7 +257,7 @@
         .tag {
             padding: 11px 20px;
             border: 1px solid var(--g600);
-            font-family: 'Space Mono', monospace;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: 15px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -282,7 +306,7 @@
             border: none;
             border-bottom: 1px solid var(--g500);
             color: var(--white);
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-style: italic;
             font-weight: 400;
             font-size: clamp(18px, 4.5vw, 24px);
@@ -310,7 +334,7 @@
             border: none;
             border-bottom: 1px solid var(--g700);
             color: var(--white);
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-style: italic;
             font-weight: 300;
             font-size: clamp(18px, 4.5vw, 26px);
@@ -342,6 +366,19 @@
             align-items: center;
             margin-top: auto;
             padding-top: 32px;
+            position: relative;
+        }
+
+        .nav-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: invert(1);
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .nav-right {
@@ -351,7 +388,7 @@
         }
 
         .btn-back {
-            font-family: 'Space Mono', monospace;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: 13px;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -380,7 +417,7 @@
         }
 
         .btn-next {
-            font-family: 'Space Mono', monospace;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: 14px;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -530,17 +567,28 @@
         }
 
         .brand {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(88px, 26vw, 200px);
-            line-height: 0.88;
-            letter-spacing: -0.01em;
-            color: var(--white);
-            margin-bottom: 14px;
             display: block;
+            width: clamp(220px, 78vw, 480px);
+            height: auto;
+            transform: translateY(40%);
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        .hero-logo {
+            position: absolute;
+            top: 28px;
+            right: 24px;
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            filter: invert(1);
+            z-index: 10;
+            opacity: 0.9;
         }
 
         .hero-sub {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-style: italic;
             font-weight: 400;
             font-size: clamp(20px, 5vw, 26px);
@@ -553,7 +601,7 @@
             display: inline-flex;
             align-items: center;
             gap: 14px;
-            font-family: 'Space Mono', monospace;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: 11px;
             letter-spacing: 0.22em;
             text-transform: uppercase;
@@ -592,7 +640,7 @@
         }
 
         .contact-title {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-weight: 400;
             font-size: clamp(26px, 7vw, 46px);
             line-height: 1.1;
@@ -623,7 +671,7 @@
             border: none;
             border-bottom: 1px solid var(--g700);
             color: var(--white);
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: clamp(18px, 5vw, 26px);
             font-weight: 300;
             padding: 10px 0;
@@ -645,7 +693,7 @@
             background: var(--white);
             color: var(--black);
             border: none;
-            font-family: 'Space Mono', monospace;
+            font-family: 'Eurostile Extended', sans-serif;
             font-size: 15px;
             letter-spacing: 0.18em;
             text-transform: uppercase;
@@ -678,16 +726,28 @@
         }
 
         .done-mark {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(64px, 22vw, 130px);
-            color: var(--white);
             line-height: 1;
             margin-bottom: 4px;
-            letter-spacing: -0.02em;
+        }
+
+        .done-logo {
+            width: clamp(80px, 22vw, 130px);
+            height: auto;
+            filter: invert(1);
+        }
+
+        .done-name {
+            display: block;
+            width: clamp(120px, 40vw, 260px);
+            height: auto;
+            filter: brightness(0) invert(0.6);
+            margin-top: 4px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .done-title {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Eurostile Extended', sans-serif;
             font-style: italic;
             font-weight: 400;
             font-size: clamp(20px, 5vw, 32px);
@@ -723,7 +783,7 @@
             }
 
             .brand {
-                font-size: clamp(100px, 18vw, 230px);
+                width: clamp(280px, 55vw, 560px);
             }
         }
 
@@ -759,7 +819,7 @@
             }
 
             #s0 .brand {
-                font-size: clamp(120px, 13vw, 240px);
+                width: clamp(360px, 32vw, 680px);
             }
         }
 
@@ -813,8 +873,9 @@
                     onload="this.classList.add('loaded')">
             </div>
             <div class="hero-veil"></div>
+            <img class="hero-logo" src="public/images/LogoPolaryz.png" alt="">
             <div class="hero-body">
-                <span class="brand">POLARYZ</span>
+                <img class="brand" src="public/images/NombrePolaryz.png" alt="POLARYZ">
                 <p class="hero-sub">Cuéntanos quién eres cuando nadie te mira.</p>
                 <button class="btn-start" onclick="go(1)">
                     Comenzar
@@ -828,7 +889,8 @@
 
         <!-- ── STEP 1: Q1 ────────────────────────────────────── -->
         <div class="step" id="s1">
-            <div class="indicator"><span>POLARYZ</span><span>01 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>01 / 08</span></div>
             <div class="ghost-num">01</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -847,6 +909,7 @@
                     <p class="err" id="e1">Selecciona al menos una opción.</p>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="nextCheck(1,2)">Continuar →</button>
                         </div>
@@ -858,7 +921,8 @@
 
         <!-- ── STEP 2: Q2 ────────────────────────────────────── -->
         <div class="step" id="s2">
-            <div class="indicator"><span>POLARYZ</span><span>02 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>02 / 08</span></div>
             <div class="ghost-num">02</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -878,6 +942,7 @@
                     <p class="err" id="e2">Selecciona al menos una opción.</p>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="nextCheck(2,3)">Continuar →</button>
                         </div>
@@ -889,7 +954,8 @@
 
         <!-- ── STEP 3: Q3 ────────────────────────────────────── -->
         <div class="step" id="s3">
-            <div class="indicator"><span>POLARYZ</span><span>03 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>03 / 08</span></div>
             <div class="ghost-num">03</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -906,6 +972,7 @@
                     <p class="err" id="e3">Selecciona al menos una opción.</p>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="nextCheck(3,4)">Continuar →</button>
                         </div>
@@ -917,7 +984,8 @@
 
         <!-- ── STEP 4: Q4 ────────────────────────────────────── -->
         <div class="step" id="s4">
-            <div class="indicator"><span>POLARYZ</span><span>04 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>04 / 08</span></div>
             <div class="ghost-num">04</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -925,6 +993,7 @@
                     <textarea class="ans-area" id="a4" placeholder="Escribe libremente..."></textarea>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="saveTxt(4,5)">Continuar →</button>
                         </div>
@@ -936,7 +1005,8 @@
 
         <!-- ── STEP 5: Q5 ────────────────────────────────────── -->
         <div class="step" id="s5">
-            <div class="indicator"><span>POLARYZ</span><span>05 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>05 / 08</span></div>
             <div class="ghost-num">05</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -944,6 +1014,7 @@
                     <textarea class="ans-area" id="a5" placeholder="Escribe libremente..."></textarea>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="saveTxt(5,6)">Continuar →</button>
                         </div>
@@ -955,7 +1026,8 @@
 
         <!-- ── STEP 6: Q6 ────────────────────────────────────── -->
         <div class="step" id="s6">
-            <div class="indicator"><span>POLARYZ</span><span>06 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>06 / 08</span></div>
             <div class="ghost-num">06</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -963,6 +1035,7 @@
                     <textarea class="ans-area" id="a6" placeholder="Escribe libremente..."></textarea>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="saveTxt(6,7)">Continuar →</button>
                         </div>
@@ -974,7 +1047,8 @@
 
         <!-- ── STEP 7: Q7 ────────────────────────────────────── -->
         <div class="step" id="s7">
-            <div class="indicator"><span>POLARYZ</span><span>07 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>07 / 08</span></div>
             <div class="ghost-num">07</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -982,6 +1056,7 @@
                     <textarea class="ans-area" id="a7" placeholder="Escribe libremente..."></textarea>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="saveTxt(7,8)">Continuar →</button>
                         </div>
@@ -993,7 +1068,8 @@
 
         <!-- ── STEP 8: Q8 ────────────────────────────────────── -->
         <div class="step" id="s8">
-            <div class="indicator"><span>POLARYZ</span><span>08 / 08</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><span>08 / 08</span></div>
             <div class="ghost-num">08</div>
             <div class="q-layout">
                 <div class="q-main">
@@ -1001,6 +1077,7 @@
                     <textarea class="ans-area" id="a8" placeholder="Escribe libremente..."></textarea>
                     <div class="nav">
                         <button class="btn-back" onclick="back()">← Volver</button>
+                        <img class="nav-logo" src="public/images/LogoPolaryz.png" alt="">
                         <div class="nav-right">
                             <button class="btn-next" onclick="saveTxt(8,9)">Continuar →</button>
                         </div>
@@ -1012,7 +1089,8 @@
 
         <!-- ── STEP 9: CONTACT ───────────────────────────────── -->
         <div class="step" id="s9">
-            <div class="indicator"><span>POLARYZ</span><span>DATOS</span></div>
+            <div class="indicator"><img class="indicator-name" src="public/images/NombrePolaryz.png"
+                    alt="POLARYZ"><img class="indicator-logo-datos" src="public/images/LogoPolaryz.png" alt=""></div>
             <span class="contact-eyebrow">Última parte</span>
             <h2 class="contact-title">Casi terminamos.</h2>
             <p class="contact-note">
@@ -1031,13 +1109,13 @@
 
         <!-- ── STEP 10: SUCCESS ──────────────────────────────── -->
         <div class="step" id="s10">
-            <div class="done-mark">✕</div>
+            <div class="done-mark"><img src="public/images/LogoPolaryz.png" alt="" class="done-logo"></div>
             <p class="done-title">Gracias por tu tiempo.</p>
             <div class="done-line"></div>
             <p class="done-copy">
                 Tus respuestas ya están con nosotros.<br>
                 Algo nuevo se está construyendo.<br><br>
-                — POLARYZ
+                <img src="public/images/NombrePolaryz.png" alt="POLARYZ" class="done-name">
             </p>
         </div>
 

@@ -373,8 +373,8 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 100px;
+            width: 56px;
+            height: 56px;
             object-fit: contain;
             filter: invert(1);
             opacity: 0.5;
@@ -785,6 +785,11 @@
             .brand {
                 width: clamp(280px, 55vw, 560px);
             }
+
+            .nav-logo {
+                width: 112px;
+                height: 112px;
+            }
         }
 
         @media (min-width: 1100px) {
@@ -820,6 +825,23 @@
 
             #s0 .brand {
                 width: clamp(360px, 32vw, 680px);
+            }
+        }
+
+        @media (max-width: 767px) {
+            .btn-back {
+                font-size: 8px;
+            }
+
+            .btn-next {
+                font-size: 8px;
+            }
+
+            .nav-logo {
+                width: 42px;
+                height: 42px;
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
 
